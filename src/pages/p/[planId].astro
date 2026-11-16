@@ -1,13 +1,5 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import LpHero from '../../components/LpHero.astro';
-import TripCombobox from '../../components/TripCombobox.astro';
-import SpotAddForm from '../../components/SpotAddForm.astro';
-import DayTabs from '../../components/DayTabs.astro';
-import Tooltip from '../../components/Tooltip.astro';
-import TravelBookingAd from '../../components/TravelBookingAd.astro';
-import McpConnectModal from '../../components/McpConnectModal.astro';
-import ItineraryFooterActions from '../../components/ItineraryFooterActions.astro';
+import PlannerLayout from '../../layouts/PlannerLayout.astro';
 import { cleanupExpiredPlans, isPlanExpired } from '../../utils/planCleanup';
 
 export const prerender = false;
@@ -67,96 +59,9 @@ const spotsSummary = spotPreviewList.length > 0 ? `（${spotPreviewList.join('�
 const pageDescription = `「${initialPlanData.title}」の旅程（全${dayCount}日）${spotsSummary}。たびろーむでスポットや移動ルートを確認・共有できます。`;
 ---
 
-<Layout title={pageTitle} description={pageDescription} ogType="article">
-  <div id="app-wrapper" class="mx-auto w-full max-w-5xl transition-all duration-300">
-    <div
-      id="main-card"
-      class="clay-card min-h-[82vh] flex flex-col items-center justify-center p-5 pb-20 sm:p-10 sm:pb-28 transition-all duration-300"
-    >
-      <div id="app-header-container" class="hidden"></div>
-
-      <!-- LPヒーロー（共有URL経由時はJS側ですぐアプリ画面に切り替わります） -->
-      <LpHero />
-
-      <!-- LPヒーロー直下プロモーション枠（設定で有効化時のみ表示） -->
-      <TravelBookingAd slotId="lp_hero_bottom" />
-
-      <!-- 一体型スマートパネル: 旅行タイトル入力バー + スポット追加フォーム -->
-      <div id="lp-slot-wrapper" class="w-full max-w-xl mx-auto my-1 transition-all duration-300">
-        <TripCombobox />
-        <SpotAddForm />
-      </div>
-
-      <!-- LP下部サンプルタグ -->
-      <!-- 【重要仕様 / 改修禁止】このサンプルタグは静的な例示用です。クリック可能（buttonタグ等）にしたり、入力・開始イベントを勝手に追加しないでください。 -->
-      <div id="lp-samples-section" class="w-full max-w-xs mx-auto mt-6 text-center transition-all duration-200">
-        <p class="text-xs text-slate-500 mb-2.5 select-none font-medium">例:</p>
-        <div class="flex flex-col items-center gap-2.5 select-none">
-          <span class="clay-pill w-full rounded-full py-2 px-4 text-xs font-medium text-slate-500 text-center select-none pointer-events-none">
-            京都 2泊3日
-          </span>
-          <span class="clay-pill w-full rounded-full py-2 px-4 text-xs font-medium text-slate-500 text-center select-none pointer-events-none">
-            北海道ドライブ
-          </span>
-          <span class="clay-pill w-full rounded-full py-2 px-4 text-xs font-medium text-slate-500 text-center select-none pointer-events-none">
-            金沢 週末ひとり旅
-          </span>
-        </div>
-      </div>
-
-      <!-- 日程セクション -->
-      <section id="itinerary-section" class="hidden w-full p-4 pt-2 sm:p-6 sm:pt-2">
-        <div id="timeline" class="space-y-0 pb-4 pr-[3.75rem] sm:pr-0"></div>
-
-        <!-- 旅の準備（宿泊・レンタカー予約プロモーション） -->
-        <TravelBookingAd slotId="itinerary_bottom" />
-
-        <!-- 旅程の保存・バックアップ出力（画像/テキスト）＆削除 -->
-        <ItineraryFooterActions />
-
-        <div id="endpoint-section" class="hidden mt-6 clay-sunken p-3.5 sm:p-5">
-          <div id="departure-field">
-            <label class="mb-2 block text-sm font-medium text-slate-700" for="departure-input">出発地点</label>
-            <input
-              id="departure-input"
-              type="text"
-              placeholder="例: 東京駅"
-              class="w-full clay-input px-3.5 py-2.5 text-sm outline-none"
-            />
-          </div>
-        </div>
-
-        <div id="accommodation-section" class="hidden mt-6 clay-sunken p-3.5 sm:p-5">
-          <label class="mb-2 block text-sm font-medium text-slate-700" for="accommodation-input">宿泊地</label>
-          <div class="mb-3 flex gap-2" role="group" aria-label="宿泊地の変更範囲">
-            <button id="accommodation-scope-all" type="button" class="clay-btn rounded-xl px-3 py-1.5 text-xs font-medium text-slate-700 cursor-pointer">
-              以降すべて
-            </button>
-            <button id="accommodation-scope-next-day" type="button" class="clay-btn rounded-xl px-3 py-1.5 text-xs font-medium text-slate-700 cursor-pointer">
-              当日・翌日だけ
-            </button>
-          </div>
-          <input
-            id="accommodation-input"
-            type="text"
-            placeholder="例: 京都駅周辺"
-            class="w-full clay-input px-3.5 py-2.5 text-sm outline-none"
-          />
-          <p class="mt-2 text-xs text-slate-500">入力すると翌日の出発地点（先頭）にデフォルトで反映されます。</p>
-        </div>
-      </section>
-    </div>
-  </div>
-
-  <DayTabs />
-  <Tooltip />
-  <McpConnectModal />
-
-  <script define:vars={{ initialPlanData }}>
-    window.__INITIAL_PLAN__ = initialPlanData;
-  </script>
-
-  <script>
-    import '../../scripts/app';
-  </script>
-</Layout>
+<PlannerLayout
+  title={pageTitle}
+  description={pageDescription}
+  ogType="article"
+  initialPlanData={initialPlanData}
+/>
