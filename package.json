@@ -8,8 +8,9 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "test": "node --import ./tests/ts-loader.mjs --test ./tests/*.test.mjs",
     "check:specs": "node ./scripts/verify-specs.mjs",
-    "check": "node ./scripts/verify-specs.mjs && tsc --noEmit",
+    "check": "node ./scripts/verify-specs.mjs && npm test && tsc --noEmit",
     "astro": "astro",
     "d1:apply:local": "wrangler d1 execute tabirome-db --local --file=./db/schema.sql",
     "d1:apply:remote": "wrangler d1 execute tabirome-db --remote --file=./db/schema.sql"

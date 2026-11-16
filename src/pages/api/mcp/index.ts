@@ -7,7 +7,8 @@ import {
   MCP_CONSTANTS,
 } from '../../../utils/mcpAuth';
 import type { Trip, Day, MapType } from '../../../scripts/types';
-import { getDayRouteUrl, getSpotSearchUrl } from '../../../scripts/maps';
+import { createDefaultDay, applyAccommodation } from '../../../scripts/accommodation';
+import { buildRouteUrl } from '../../../scripts/maps';
 import { cleanupExpiredPlans, isPlanExpired, PLAN_RETENTION_DAYS } from '../../../utils/planCleanup';
 
 export const prerender = false;
@@ -18,61 +19,6 @@ function generatePlanId(length = 10): string {
   const array = new Uint8Array(length);
   crypto.getRandomValues(array);
   return Array.from(array, (byte) => chars[byte % chars.length]).join('');
-}
-
-// 空のDayオブジェクトを生成
-function createDefaultDay(name: string): Day {
-  return {
-    name,
-    spots: [],
-    accommodation: '',
-    accommodationMemo: '',
-    autoAccommodation: false, // 全日程に勝手に宿泊地がコピーされるのを防ぐため false
-    autoStart: true,
-    // 先頭スポットはまだ自動枠ではない。true のままだと Web 側 syncAutoStarts() が
-    // 前日宿泊地なしの日の先頭スポットを「自動枠」とみなして削除してしまうため false
-    autoStartSlot: false,
-    autoStartValue: '',
-  };
-}
-
-/**
- * 宿泊地を設定し、Web UI（syncAutoStarts）と同じ仕様で翌日の先頭スポット（出発地点）へ連動させる。
- * 翌日の spots[0] に宿泊地を挿入し autoStartValue で管理することで、ブラウザで開いた際に
- * 「手動変更」と誤判定されて連動が解除されるのを防ぐ。
- */
-function applyAccommodation(days: Day[], dayIndex: number, name: string, memo: string): void {
-  const day = days[dayIndex];
-  day.accommodation = name;
-  day.accommodationMemo = memo;
-  day.autoAccommodation = false;
-
-  const nextDay = days[dayIndex + 1];
-  if (!nextDay) return;
-  // 「当日のみ」相当: 翌々日以降へコピーされないよう翌日の自動宿泊地同期は無効化
-  nextDay.autoAccommodation = false;
-
-  const managed = (nextDay.autoStartValue || '').trim();
-  const currentFirst = (nextDay.spots[0]?.name || '').trim();
-  if (nextDay.autoStartSlot && managed && currentFirst === managed) {
-    // 既に自動枠がある場合は差し替え
-    nextDay.spots[0] = { name, memo: nextDay.spots[0]?.memo || '' };
-  } else {
-    nextDay.spots.unshift({ name, memo: '' });
-  }
-  nextDay.autoStart = true;
-  nextDay.autoStartSlot = true;
-  nextDay.autoStartValue = name;
-}
-
-// Google / Apple Maps のルート案内URLを生成（Web UI の getDayRouteUrl / getSpotSearchUrl と同仕様）
-function buildRouteUrl(points: string[], mapType: MapType = 'google'): string {
-  const validPoints = points.map((p) => (p || '').trim()).filter(Boolean);
-  if (validPoints.length === 0) return '';
-  if (validPoints.length === 1) {
-    return getSpotSearchUrl(validPoints[0], mapType);
-  }
-  return getDayRouteUrl(validPoints, mapType);
 }
 
 // MCPサーバーの基本設定と指示書（Instructions / Skills）
@@ -591,13 +537,12 @@ export const POST: APIRoute = async ({ request, locals, url }) => {
 
               if (sp.is_accommodation) {
                 // Web UI と同様: 最終日に到着地点がある場合は宿泊地を登録しない
-                if (dIdx === days.length - 1 && arrival) {
+                if (!applyAccommodation(days, dIdx, name, memo, { arrival })) {
                   warnings.push(
                     `「${name}」は最終日に到着地点が設定されているため宿泊地として登録しませんでした。`
                   );
                   continue;
                 }
-                applyAccommodation(days, dIdx, name, memo);
               } else {
                 if (targetDay.spots.length >= MCP_CONSTANTS.MAX_SPOTS_PER_DAY) continue;
                 targetDay.spots.push({ name, memo });
@@ -730,13 +675,12 @@ export const POST: APIRoute = async ({ request, locals, url }) => {
 
             if (sp.is_accommodation) {
               // Web UI と同様: 最終日に到着地点がある場合は宿泊地を登録しない
-              if (dIdx === trip.days.length - 1 && hasArrival) {
+              if (!applyAccommodation(trip.days, dIdx, name, memo, { arrival: trip.arrival, hasArrival })) {
                 warnings.push(
                   `「${name}」は最終日に到着地点が設定されているため宿泊地として登録しませんでした。`
                 );
                 continue;
               }
-              applyAccommodation(trip.days, dIdx, name, memo);
             } else {
               if (targetDay.spots.length >= MCP_CONSTANTS.MAX_SPOTS_PER_DAY) continue;
               targetDay.spots.push({ name, memo });

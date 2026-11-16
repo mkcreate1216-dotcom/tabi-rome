@@ -21,6 +21,7 @@ import {
   Download,
 } from 'lucide';
 import type { AppState, Day, MapType } from './types';
+import { syncAutoStarts as syncDaysAutoStarts } from './accommodation';
 import {
   TripStore,
   MAP_TYPE_STORAGE_KEY,
@@ -195,55 +196,7 @@ function saveState(markAsUnsaved = true): void {
 }
 
 function syncAutoStarts(): void {
-  for (let i = 1; i < state.days.length; i++) {
-    const previousAccommodation = (state.days[i - 1].accommodation || '').trim();
-    const day = state.days[i];
-    if (day.autoAccommodation) {
-      day.accommodation = previousAccommodation;
-      day.hasAccommodation = Boolean(previousAccommodation);
-    }
-    if (day.autoStart) {
-      if (previousAccommodation) {
-        if (day.autoStartSlot) {
-          if (day.spots.length === 0) {
-            day.spots.unshift({ name: previousAccommodation, memo: '' });
-            day.autoStartSlot = true;
-            day.autoStartValue = previousAccommodation;
-          } else {
-            const currentFirst = (day.spots[0]?.name || '').trim();
-            const managedValue = (day.autoStartValue || '').trim();
-            if (managedValue && currentFirst !== managedValue) {
-              day.autoStart = false;
-              day.autoStartSlot = false;
-              day.autoStartValue = '';
-            } else if (!managedValue && currentFirst) {
-              day.autoStart = false;
-              day.autoStartSlot = false;
-              day.autoStartValue = '';
-            } else {
-              day.spots[0] = { name: previousAccommodation, memo: day.spots[0]?.memo || '' };
-              day.autoStartValue = previousAccommodation;
-            }
-          }
-        } else {
-          day.spots.unshift({ name: previousAccommodation, memo: '' });
-          day.autoStartSlot = true;
-          day.autoStartValue = previousAccommodation;
-        }
-      } else {
-        const managedValue = (day.autoStartValue || '').trim();
-        if (
-          day.autoStartSlot &&
-          day.spots.length > 0 &&
-          ((day.spots[0]?.name || '').trim() === managedValue || !managedValue)
-        ) {
-          day.spots.shift();
-        }
-        day.autoStartSlot = false;
-        day.autoStartValue = '';
-      }
-    }
-  }
+  syncDaysAutoStarts(state.days);
 }
 
 function updateStickyOffsets(): void {
