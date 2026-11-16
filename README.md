@@ -35,12 +35,15 @@
   - コンボボックスから素早く新規作成・切り替え・削除が可能。
 
 - **共有プラン（Cloudflare D1）**
-  - 旅程をサーバーに保存し、共有URL（`/p/[planId]`）を生成。
-  - 同行者との共有・閲覧に対応。
+  - 旅程をサーバー（Cloudflare D1）に保存し、共有URL（`/p/[planId]`、実装: [`src/pages/p/[planId].astro`](src/pages/p/[planId].astro) / [`src/pages/api/plans/`](src/pages/api/plans/)）を発行。
+  - 同行者との共有・共同編集に対応（最終更新から90日間保持）。
 
-- **AI連携（MCP）**
-  - MCPプロトコル対応により、AIツールから旅程の取得・更新が可能。
-  - トークン管理とレートリミットを実装。
+- **AI連携（Remote MCP）**
+  - Remote MCP サーバー（`/api/mcp`、実装: [`src/pages/api/mcp/index.ts`](src/pages/api/mcp/index.ts) / 案内UI: [`src/components/McpConnectModal.astro`](src/components/McpConnectModal.astro)）により、専用URLをAIに送るだけで旅程の作成・更新が可能。
+  - トークン管理（[`src/utils/mcpAuth.ts`](src/utils/mcpAuth.ts)）と多層レートリミットを実装。
+
+- **アクセス解析 & 開発者ダッシュボード**
+  - 軽量アクセス解析（`/api/analytics/track`、実装: [`src/pages/api/analytics/track.ts`](src/pages/api/analytics/track.ts)）と管理画面（[`src/pages/admin/index.astro`](src/pages/admin/index.astro)）で、共有プランIDをマスクした安全な稼働状況の可視化を実現。
 
 - **LINE共有テキスト生成・エクスポート**
   - 旅行名、各日の旅程、選択中マップ（Google Maps または Apple Maps）のルートURLを整形したテキストとしてワンクリックでクリップボードへコピー。
@@ -80,9 +83,13 @@ root-generator-public/
 │   ├── ads-management.md         # 広告管理マニュアル
 │   └── Todo.md
 ├── public/
-│   └── favicon.svg               # アプリケーションファビコン
+│   ├── favicon.svg               # アプリケーションファビコン
+│   └── logo.svg                  # たびろーむ公式ロゴ
+├── scripts/
+│   └── verify-specs.mjs          # 仕様ガード検証スクリプト
 ├── src/
 │   ├── components/               # Astro UIコンポーネント
+│   │   ├── BrandLogo.astro       # ブランドロゴコンポーネント
 │   │   ├── Header.astro
 │   │   ├── LpHero.astro           # LPヒーロー
 │   │   ├── SpotAddForm.astro
@@ -91,25 +98,35 @@ root-generator-public/
 │   │   ├── TravelBookingAd.astro  # プロモーション枠
 │   │   ├── McpConnectModal.astro  # MCP連携モーダル
 │   │   ├── ItineraryFooterActions.astro
+│   │   ├── Footer.astro           # フッター・免責事項・プライバシー導線
 │   │   └── Tooltip.astro
 │   ├── config/
 │   │   └── ads.ts                 # 広告設定
 │   ├── layouts/
-│   │   └── Layout.astro
+│   │   ├── Layout.astro           # 共通HTML・OGPレイアウト
+│   │   └── PlannerLayout.astro    # トップ・共有ページ共通プランナー画面
 │   ├── pages/
 │   │   ├── index.astro            # メインページ
+│   │   ├── privacy.astro          # プライバシー・広告表記ページ
+│   │   ├── robots.txt.ts          # robots.txt エンドポイント
+│   │   ├── sitemap.xml.ts         # sitemap.xml エンドポイント
 │   │   ├── p/[planId].astro       # 共有プランページ
-│   │   ├── admin/                 # 管理画面
+│   │   ├── admin/                 # 管理画面（ダッシュボード・広告設定）
 │   │   └── api/                   # APIルート（plans, mcp, analytics）
 │   ├── scripts/                  # TypeScript ロジック
-│   │   ├── app.ts
-│   │   ├── storage.ts
-│   │   ├── maps.ts
-│   │   ├── share.ts
-│   │   ├── flip.ts
-│   │   └── types.ts
+│   │   ├── app.ts                 # メインコントローラー
+│   │   ├── accommodation.ts       # 宿泊地翌日連動ロジック（純関数）
+│   │   ├── storage.ts             # LocalStorage 永続化
+│   │   ├── collab.ts              # クラウド共有・同期管理
+│   │   ├── export.ts              # 画像(.png)・テキスト(.txt)出力
+│   │   ├── maps.ts                # Google / Apple Maps URL生成
+│   │   ├── share.ts               # LINE共有テキスト生成・トースト通知
+│   │   ├── flip.ts                # FLIP並び替えアニメーション
+│   │   └── types.ts               # 型定義
 │   └── styles/
 │       └── global.css
+├── tests/
+│   └── accommodation-and-maps.test.mjs # 宿泊連動・マップURL単体テスト
 ├── astro.config.mjs
 ├── tailwind.config.mjs
 ├── tsconfig.json
