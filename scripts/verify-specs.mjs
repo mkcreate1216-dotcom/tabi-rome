@@ -7,18 +7,20 @@ const rootDir = process.cwd();
 
 const checks = [
   {
-    name: 'LPサンプルタグのボタン化・クリッカブル化チェック (index.astro)',
-    file: 'src/pages/index.astro',
+    name: 'LPサンプルタグのボタン化・クリッカブル化チェック (PlannerLayout.astro)',
+    file: 'src/layouts/PlannerLayout.astro',
     validate: (content) => {
       const errors = [];
       if (content.includes('data-sample-trip')) {
         errors.push('data-sample-trip 属性が含まれています。LPの例は非クリッカブルである必要があります。');
       }
       const sampleSectionMatch = content.match(/<div[^>]*id="lp-samples-section"[\s\S]*?<\/div>\s*<\/div>/);
-      if (sampleSectionMatch) {
+      if (!sampleSectionMatch) {
+        errors.push('PlannerLayout.astro に lp-samples-section が存在しません。');
+      } else {
         const section = sampleSectionMatch[0];
-        if (section.includes('<button')) {
-          errors.push('lp-samples-section 内に <button> タグが含まれています。<span> などの静的タグを使用してください。');
+        if (section.includes('<button') || section.includes('<a')) {
+          errors.push('lp-samples-section 内に <button> または <a> タグが含まれています。<span> などの静的タグを使用してください。');
         }
         if (section.includes('cursor-pointer')) {
           errors.push('lp-samples-section 内に cursor-pointer が含まれています。クリック可能に見えるスタイルは禁止です。');
@@ -28,22 +30,35 @@ const checks = [
     }
   },
   {
-    name: 'LPサンプルタグのボタン化・クリッカブル化チェック (planId.astro)',
+    name: 'トップページの共通レイアウト利用と重複排除チェック (index.astro)',
+    file: 'src/pages/index.astro',
+    validate: (content) => {
+      const errors = [];
+      if (content.includes('data-sample-trip')) {
+        errors.push('data-sample-trip 属性が含まれています。LPの例は非クリッカブルである必要があります。');
+      }
+      if (!content.includes('PlannerLayout')) {
+        errors.push('index.astro は共通レイアウト PlannerLayout を使用する必要があります。');
+      }
+      if (content.includes('id="lp-samples-section"')) {
+        errors.push('index.astro に lp-samples-section が重複しています。PlannerLayout 側で一元管理してください。');
+      }
+      return errors;
+    }
+  },
+  {
+    name: '共有ページの共通レイアウト利用と重複排除チェック (planId.astro)',
     file: 'src/pages/p/[planId].astro',
     validate: (content) => {
       const errors = [];
       if (content.includes('data-sample-trip')) {
         errors.push('data-sample-trip 属性が含まれています。LPの例は非クリッカブルである必要があります。');
       }
-      const sampleSectionMatch = content.match(/<div[^>]*id="lp-samples-section"[\s\S]*?<\/div>\s*<\/div>/);
-      if (sampleSectionMatch) {
-        const section = sampleSectionMatch[0];
-        if (section.includes('<button')) {
-          errors.push('lp-samples-section 内に <button> タグが含まれています。<span> などの静的タグを使用してください。');
-        }
-        if (section.includes('cursor-pointer')) {
-          errors.push('lp-samples-section 内に cursor-pointer が含まれています。クリック可能に見えるスタイルは禁止です。');
-        }
+      if (!content.includes('PlannerLayout')) {
+        errors.push('[planId].astro は共通レイアウト PlannerLayout を使用する必要があります。');
+      }
+      if (content.includes('id="lp-samples-section"')) {
+        errors.push('[planId].astro に lp-samples-section が重複しています。PlannerLayout 側で一元管理してください。');
       }
       return errors;
     }
