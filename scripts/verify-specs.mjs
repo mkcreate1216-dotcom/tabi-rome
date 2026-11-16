@@ -123,6 +123,61 @@ const checks = [
       }
       return errors;
     }
+  },
+  {
+    name: 'OGPメタタグ出力チェック (Layout.astro)',
+    file: 'src/layouts/Layout.astro',
+    validate: (content) => {
+      const errors = [];
+      if (!content.includes('property="og:title"') || !content.includes('property="og:description"')) {
+        errors.push('Layout.astro に OGP タグ (og:title / og:description) が設定されていません。');
+      }
+      return errors;
+    }
+  },
+  {
+    name: 'フッターからのプライバシー表記導線チェック (Footer.astro)',
+    file: 'src/components/Footer.astro',
+    validate: (content) => {
+      const errors = [];
+      if (!content.includes('href="/privacy"')) {
+        errors.push('Footer.astro にプライバシー表記ページ (/privacy) へのリンクがありません。');
+      }
+      return errors;
+    }
+  },
+  {
+    name: 'プライバシー・広告表記ページの必須項目チェック (privacy.astro)',
+    file: 'src/pages/privacy.astro',
+    validate: (content) => {
+      const errors = [];
+      if (!content.includes('アクセス解析') || !content.includes('アフィリエイト')) {
+        errors.push('privacy.astro に保存データ・アクセス解析・広告（アフィリエイト）の記載が必要です。');
+      }
+      return errors;
+    }
+  },
+  {
+    name: 'robots.txt エンドポイント存在チェック (robots.txt.ts)',
+    file: 'src/pages/robots.txt.ts',
+    validate: (content) => {
+      const errors = [];
+      if (!content.includes('Sitemap:')) {
+        errors.push('robots.txt.ts に Sitemap の記載がありません。');
+      }
+      return errors;
+    }
+  },
+  {
+    name: 'sitemap.xml エンドポイント存在チェック (sitemap.xml.ts)',
+    file: 'src/pages/sitemap.xml.ts',
+    validate: (content) => {
+      const errors = [];
+      if (!content.includes('<urlset')) {
+        errors.push('sitemap.xml.ts に <urlset> の出力がありません。');
+      }
+      return errors;
+    }
   }
 ];
 

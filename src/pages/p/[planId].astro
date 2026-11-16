@@ -49,9 +49,25 @@ if (!initialPlanData) {
 }
 
 const pageTitle = `${initialPlanData.title} - たびろーむ`;
+const dayCount = Array.isArray(initialPlanData.data?.days) ? initialPlanData.data.days.length : 1;
+const spotPreviewList: string[] = [];
+if (Array.isArray(initialPlanData.data?.days)) {
+  for (const day of initialPlanData.data.days) {
+    if (Array.isArray(day?.spots)) {
+      for (const spot of day.spots) {
+        const name = typeof spot === 'string' ? spot.trim() : spot?.name?.trim();
+        if (name && !spotPreviewList.includes(name) && spotPreviewList.length < 4) {
+          spotPreviewList.push(name);
+        }
+      }
+    }
+  }
+}
+const spotsSummary = spotPreviewList.length > 0 ? `（${spotPreviewList.join('・')} ほか）` : '';
+const pageDescription = `「${initialPlanData.title}」の旅程（全${dayCount}日）${spotsSummary}。たびろーむでスポットや移動ルートを確認・共有できます。`;
 ---
 
-<Layout title={pageTitle}>
+<Layout title={pageTitle} description={pageDescription} ogType="article">
   <div id="app-wrapper" class="mx-auto w-full max-w-5xl transition-all duration-300">
     <div
       id="main-card"

@@ -6,14 +6,18 @@ import TravelBookingAd from '../components/TravelBookingAd.astro';
 interface Props {
   title?: string;
   description?: string;
+  ogType?: string;
   showFooterAd?: boolean;
 }
 
 const {
   title = 'たびろーむ - 旅程作成・ルート案内アプリ',
   description = '道草を楽しむ、気ままな旅へ。スポットや宿泊地をタイムラインに追加するだけで、旅程の作成からルート確認・LINE共有まで完結する旅程作成アプリ。',
+  ogType = 'website',
   showFooterAd = true,
 } = Astro.props;
+
+const canonicalUrl = Astro.url?.href || '';
 ---
 
 <!doctype html>
@@ -23,7 +27,17 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="たびろーむ" />
+    <meta property="og:locale" content="ja_JP" />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <slot name="head" />
   </head>
   <body class="min-h-screen bg-slate-100 text-slate-900 flex flex-col justify-between">
     <main class="flex-1 w-full">
