@@ -74,3 +74,19 @@ export function getDayRouteUrl(locations: string[], mapType: MapType): string {
   return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}${waypointsParam ? `&waypoints=${waypointsParam}` : ''}`;
 }
 
+/**
+ * 地点リスト（0件 / 1件 / 2件以上）から適切な Google Maps / Apple Maps URL を生成する純関数
+ * - 0件: 空文字 ''
+ * - 1件: 単一地点の検索URL (getSpotSearchUrl)
+ * - 2件以上: ルート案内URL (getDayRouteUrl)
+ */
+export function buildRouteUrl(points: string[], mapType: MapType = 'google'): string {
+  const validPoints = (points || []).map((p) => (p || '').trim()).filter(Boolean);
+  if (validPoints.length === 0) return '';
+  if (validPoints.length === 1) {
+    return getSpotSearchUrl(validPoints[0], mapType);
+  }
+  return getDayRouteUrl(validPoints, mapType);
+}
+
+
