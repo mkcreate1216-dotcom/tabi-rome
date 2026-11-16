@@ -4,10 +4,14 @@ import Layout from '../../layouts/Layout.astro';
 export const prerender = false;
 
 const db = Astro.locals.runtime?.env?.DB;
-const envAdminKey =
+const rawAdminKey =
   Astro.locals.runtime?.env?.ADMIN_PASSWORD ||
   Astro.locals.runtime?.env?.ADMIN_KEY ||
-  'tabirome-dev-2026';
+  import.meta.env.ADMIN_PASSWORD ||
+  import.meta.env.ADMIN_KEY ||
+  '';
+const envAdminKey = typeof rawAdminKey === 'string' ? rawAdminKey.trim() : '';
+const isAdminKeyConfigured = envAdminKey.length > 0;
 
 const cookieSession = Astro.cookies.get('tabirome_admin_session')?.value;
 const queryKey = Astro.url.searchParams.get('key');
@@ -24,27 +28,31 @@ let loginError = '';
 
 // POSTでのログイン試行
 if (Astro.request.method === 'POST') {
-  try {
-    const formData = await Astro.request.formData();
-    const inputPassword = formData.get('password');
-    if (typeof inputPassword === 'string' && inputPassword.trim() === envAdminKey.trim()) {
-      Astro.cookies.set('tabirome_admin_session', envAdminKey, {
-        path: '/',
-        httpOnly: true,
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7, // 7日間保持
-      });
-      return Astro.redirect('/admin');
-    } else {
-      loginError = 'パスワードが正しくありません。';
+  if (!isAdminKeyConfigured) {
+    loginError = '環境変数 ADMIN_PASSWORD が未設定のためログインできません。';
+  } else {
+    try {
+      const formData = await Astro.request.formData();
+      const inputPassword = formData.get('password');
+      if (typeof inputPassword === 'string' && inputPassword.trim() === envAdminKey) {
+        Astro.cookies.set('tabirome_admin_session', envAdminKey, {
+          path: '/',
+          httpOnly: true,
+          sameSite: 'lax',
+          maxAge: 60 * 60 * 24 * 7, // 7日間保持
+        });
+        return Astro.redirect('/admin');
+      } else {
+        loginError = 'パスワードが正しくありません。';
+      }
+    } catch (e) {
+      loginError = 'ログイン処理中にエラーが発生しました。';
     }
-  } catch (e) {
-    loginError = 'ログイン処理中にエラーが発生しました。';
   }
 }
 
-// 認証チェック
-if (cookieSession === envAdminKey || queryKey === envAdminKey) {
+// 認証チェック（環境変数が未設定のときはログイン不可）
+if (isAdminKeyConfigured && (cookieSession === envAdminKey || queryKey === envAdminKey)) {
   isAuthenticated = true;
   if (queryKey === envAdminKey && !cookieSession) {
     Astro.cookies.set('tabirome_admin_session', envAdminKey, {
