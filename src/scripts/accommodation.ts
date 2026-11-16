@@ -131,3 +131,4 @@ export function applyAccommodation(
   syncAutoStarts(days);
   return true;
 }
+

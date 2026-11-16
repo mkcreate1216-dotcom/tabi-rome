@@ -64,3 +64,4 @@ node ./scripts/evaluate-readability.mjs src/components/Footer.astro
   - **修正案**: `text-slate-400` → `text-slate-500` (WCAG `4.76:1` / APCA `Lc 65.4`) または `text-slate-600` (WCAG `7.58:1` / APCA `Lc 79.2`)
 - **タイポグラフィ判定**: `text-[11px]` → `text-xs leading-relaxed max-w-prose`
 ```
+

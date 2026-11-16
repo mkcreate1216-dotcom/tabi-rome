@@ -29,3 +29,4 @@
 | `src/layouts/PlannerLayout.astro` | LP下部の静的サンプル例ピル（`#lp-samples-section`）が薄灰背景上で `text-slate-500` | 静的 `<span>`・非クリッカブル仕様を維持したまま `text-slate-600` に変更 | 対 `#f1f5f9` 背景で WCAG `4.21:1` → `6.71:1`（AAクリア） |
 | `src/components/Footer.astro` | 免責事項（`.disclaimer-content`）が `text-[11px]` かつ全幅表示 | `max-w-prose mx-auto text-xs leading-relaxed` を適用 | 1行あたり文字数を適正範囲に制限し視線移動負荷を軽減 |
 | `src/pages/privacy.astro` | 本文が `text-xs sm:text-sm` かつ行長制限なし | `max-w-prose text-sm sm:text-base leading-relaxed` に改善 | デスクトップで `16px (1rem)`・適正行長を達成 |
+
