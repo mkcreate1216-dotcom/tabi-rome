@@ -76,6 +76,26 @@ const checks = [
       if (!/path LIKE '\/p\/%'/.test(content)) {
         errors.push('人気ページの集計で /p/{id} を /p にまとめていません。共有プランIDは表示できません。');
       }
+      if (/ADMIN_(?:PASSWORD|KEY)\s*\|\|\s*['"][^'"]+['"]/.test(content)) {
+        errors.push('管理画面に既定パスワード（フォールバック文字列）を設定してはなりません。');
+      }
+      if (!content.includes('isAdminKeyConfigured')) {
+        errors.push('環境変数未設定時に管理画面へのログインを拒否するガード (isAdminKeyConfigured) が必要です。');
+      }
+      return errors;
+    }
+  },
+  {
+    name: '広告管理画面での既定パスワード禁止チェック (admin/ads.astro)',
+    file: 'src/pages/admin/ads.astro',
+    validate: (content) => {
+      const errors = [];
+      if (/ADMIN_(?:PASSWORD|KEY)\s*\|\|\s*['"][^'"]+['"]/.test(content)) {
+        errors.push('広告管理画面に既定パスワード（フォールバック文字列）を設定してはなりません。');
+      }
+      if (!content.includes('isAdminKeyConfigured')) {
+        errors.push('環境変数未設定時に広告管理画面へのアクセスを拒否するガード (isAdminKeyConfigured) が必要です。');
+      }
       return errors;
     }
   },

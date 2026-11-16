@@ -4,15 +4,19 @@ import { adsConfig, AD_SIZE_PRESETS, type AdSlotSize } from '../../config/ads';
 
 export const prerender = false;
 
-const envAdminKey =
+const rawAdminKey =
   Astro.locals.runtime?.env?.ADMIN_PASSWORD ||
   Astro.locals.runtime?.env?.ADMIN_KEY ||
-  'tabirome-dev-2026';
+  import.meta.env.ADMIN_PASSWORD ||
+  import.meta.env.ADMIN_KEY ||
+  '';
+const envAdminKey = typeof rawAdminKey === 'string' ? rawAdminKey.trim() : '';
+const isAdminKeyConfigured = envAdminKey.length > 0;
 
 const cookieSession = Astro.cookies.get('tabirome_admin_session')?.value;
 const queryKey = Astro.url.searchParams.get('key');
 
-if (cookieSession !== envAdminKey && queryKey !== envAdminKey) {
+if (!isAdminKeyConfigured || (cookieSession !== envAdminKey && queryKey !== envAdminKey)) {
   return Astro.redirect('/admin');
 }
 ---
