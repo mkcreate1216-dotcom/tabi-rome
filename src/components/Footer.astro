@@ -89,6 +89,12 @@ const displayYear = currentYear >= 2026 ? currentYear : 2026;
             </p>
           </div>
           <div>
+            <h4 class="font-bold text-slate-700 mb-1">【プライバシー・アクセス解析・広告について】</h4>
+            <p>
+              本サービスでは、ブラウザ内（LocalStorage）および共有機能・AI連携利用時のクラウドデータベースに旅程データを保存します。また、サービス改善のための匿名アクセス解析およびアフィリエイト広告を掲載しています。詳細は<a href="/privacy" class="underline font-semibold text-slate-700 hover:text-slate-900 ml-0.5">プライバシー・広告表記ページ</a>をご確認ください。
+            </p>
+          </div>
+          <div>
             <h4 class="font-bold text-slate-700 mb-1">【サービスの変更等】</h4>
             <p>
               本サービスは、ユーザーへの事前の通知なく仕様の変更、メンテナンスに伴う一時停止、または提供の終了を行う場合があります。
@@ -103,8 +109,15 @@ const displayYear = currentYear >= 2026 ? currentYear : 2026;
       <p class="font-medium tracking-wide">
         &copy; {displayYear} Fukumimi
       </p>
-      <div class="flex items-center gap-4">
+      <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
         <span>たびろーむ (TabiRome)</span>
+        <span class="text-slate-300">•</span>
+        <a
+          href="/privacy"
+          class="hover:text-slate-800 transition-colors underline-offset-2 hover:underline"
+        >
+          プライバシー・広告表記
+        </a>
         <span class="text-slate-300">•</span>
         <a
           href="https://x.com/fukumimi1216"
