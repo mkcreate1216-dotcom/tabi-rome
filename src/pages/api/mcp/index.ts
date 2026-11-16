@@ -393,8 +393,12 @@ export const GET: APIRoute = async ({ request, locals, url }) => {
       status: 'authenticated',
       service: 'tabirome-mcp',
       version: MCP_SERVER_INFO.version,
+      endpoint: `${url.origin}/api/mcp?token=${encodeURIComponent(token)}`,
       quota,
       tools: MCP_TOOLS.map((t) => t.name),
+      toolSchemas: MCP_TOOLS,
+      howToUse:
+        'このURLに対して POST (Content-Type: application/json) で JSON-RPC 2.0 リクエスト {"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"create_trip","arguments":{...}}} を送信すると旅程を作成・編集できます。',
       instructions: MCP_INSTRUCTIONS,
     }),
     {

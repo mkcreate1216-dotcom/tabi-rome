@@ -19,7 +19,7 @@
           ✦
         </span>
         <h2 id="mcp-modal-title" class="text-base sm:text-lg font-bold text-slate-800">
-          スマホAIアプリ連携 (MCP)
+          AIにURLを送って旅程を作る
         </h2>
       </div>
       <button
@@ -34,13 +34,13 @@
 
     <!-- 概要説明 -->
     <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
-      ClaudeアプリやChatGPTなどのAIアプリにこの連携URLを登録すると、AIとチャットしながらたびろーむの旅程作成やスポット追加が行えます。
+      むずかしい設定は不要です。下の<strong>あなた専用URLをコピーして、普段使っているAIにそのまま送るだけ</strong>で、AIと相談しながら旅程を作れます。
     </p>
 
     <!-- URL取得・コピーセクション -->
     <div class="clay-sunken p-3.5 sm:p-4 rounded-2xl mb-4">
       <label class="block text-xs font-semibold text-slate-700 mb-1.5" for="mcp-url-input">
-        MCP連携URL（あなた専用・トークン付き）
+        AIに送る専用URL（トークン付き）
       </label>
       <div class="flex flex-col sm:flex-row gap-2">
         <input
@@ -59,35 +59,44 @@
         </button>
       </div>
 
-      <div class="mt-2.5 flex items-center justify-between text-[11px] text-slate-500">
+      <div class="mt-2.5 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500">
         <span id="mcp-status-text" class="inline-flex items-center gap-1 text-emerald-600 font-medium">
-          ● 連携準備完了
+          ● 準備完了（そのままAIに貼れます）
         </span>
-        <button
-          id="mcp-regenerate-btn"
-          type="button"
-          class="text-slate-400 hover:text-slate-600 underline cursor-pointer"
-        >
-          新しいURLを再発行
-        </button>
+        <div class="flex items-center gap-3">
+          <button
+            id="mcp-copy-prompt-btn"
+            type="button"
+            class="text-slate-700 hover:text-slate-900 font-semibold underline cursor-pointer"
+          >
+            依頼文つきでコピー
+          </button>
+          <button
+            id="mcp-regenerate-btn"
+            type="button"
+            class="text-slate-400 hover:text-slate-600 underline cursor-pointer"
+          >
+            URLを再発行
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- かんたん3ステップ -->
     <div class="space-y-2 mb-4 text-xs text-slate-600">
-      <p class="font-semibold text-slate-700 text-xs">📱 使い方 (かんたん3ステップ):</p>
-      <div class="grid grid-cols-1 gap-1.5 pl-1">
+      <p class="font-semibold text-slate-700 text-xs">📱 使い方（URLをAIに投げるだけ！）:</p>
+      <div class="grid grid-cols-1 gap-2 pl-1">
         <div class="flex items-start gap-2">
           <span class="flex-shrink-0 flex h-4 w-4 items-center justify-center rounded-full bg-slate-100 text-[10px] font-bold text-slate-700">1</span>
-          <span>上の「<strong>URLをコピー</strong>」をタップします。</span>
+          <span>上の「<strong>URLをコピー</strong>」（または「依頼文つきでコピー」）をタップします。</span>
         </div>
         <div class="flex items-start gap-2">
           <span class="flex-shrink-0 flex h-4 w-4 items-center justify-center rounded-full bg-slate-100 text-[10px] font-bold text-slate-700">2</span>
-          <span>スマホのClaudeアプリ等のMCP設定にこのURLを登録します。</span>
+          <span>いつも使っているAI（ChatGPT / Claude / Gemini など）に<strong>URLをそのまま貼り付けて送ります</strong>。</span>
         </div>
         <div class="flex items-start gap-2">
           <span class="flex-shrink-0 flex h-4 w-4 items-center justify-center rounded-full bg-slate-100 text-[10px] font-bold text-slate-700">3</span>
-          <span>「<strong>京都の2泊3日プラン作って！</strong>」と話しかけるだけで、旅程が自動作成されます。</span>
+          <span>「<strong>京都の2泊3日プラン作って！</strong>」と話しかけると、たびろーむの旅程URLが届きます。</span>
         </div>
       </div>
     </div>
@@ -97,8 +106,12 @@
       <div class="flex items-center gap-1.5 font-semibold text-slate-700">
         <span>💡 ご利用のヒント</span>
       </div>
-      <p>・1日に作成・調整できる回数は最大200回です。</p>
-      <p>・完成した旅程はAIから案内されるWebリンクで、いつでも地図ルート確認やLINE共有ができます。</p>
+      <p>・完成した旅程はAIから届くリンクを開くだけで、地図ルート確認やLINE共有ができます。</p>
+      <p>・1日に最大200回まで作成・調整できます（データは最終更新から90日間保持されます）。</p>
+      <details class="pt-1 text-slate-400">
+        <summary class="cursor-pointer hover:text-slate-600 select-none">MCP対応アプリに登録して使う場合（毎回URLを貼らずに使いたい方）</summary>
+        <p class="mt-1 pl-2 text-slate-500">ClaudeやCursorなどのMCP（コネクタ）設定にこのURLを登録しておくと、次回からURLを貼らずに話しかけるだけで旅程を作れます。</p>
+      </details>
     </div>
   </div>
 </div>
@@ -111,6 +124,7 @@
   const urlInput = document.getElementById('mcp-url-input') as HTMLInputElement | null;
   const copyBtn = document.getElementById('mcp-copy-url-btn');
   const copyBtnText = document.getElementById('mcp-copy-btn-text');
+  const copyPromptBtn = document.getElementById('mcp-copy-prompt-btn');
   const regenerateBtn = document.getElementById('mcp-regenerate-btn');
   const statusText = document.getElementById('mcp-status-text');
 
@@ -168,7 +182,7 @@
           console.warn('Failed to save to localStorage:', e);
         }
         if (statusText) {
-          statusText.innerHTML = '<span class="text-emerald-600 font-medium">● 連携準備完了</span>';
+          statusText.innerHTML = '<span class="text-emerald-600 font-medium">● 準備完了（そのままAIに貼れます）</span>';
         }
       } else {
         throw new Error(data.error || 'Failed to generate token');
@@ -206,12 +220,31 @@
     }
   }
 
+  // 依頼文つきでクリップボードにコピー
+  async function copyMcpPrompt() {
+    if (!urlInput || !urlInput.value || urlInput.value.startsWith('発行中')) return;
+    const promptText = `以下の「たびろーむ」連携URLを使って、一緒に旅行プランを作ってください！\n${urlInput.value}\n\nまずは行き先や日程を相談したいです。`;
+    try {
+      await navigator.clipboard.writeText(promptText);
+      if (copyPromptBtn) {
+        const originalText = copyPromptBtn.textContent;
+        copyPromptBtn.textContent = '依頼文をコピーしました！';
+        setTimeout(() => {
+          if (copyPromptBtn) copyPromptBtn.textContent = originalText || '依頼文つきでコピー';
+        }, 2000);
+      }
+    } catch (err) {
+      copyMcpUrl();
+    }
+  }
+
   // イベント登録
   closeBtn?.addEventListener('click', closeMcpModal);
   modal?.addEventListener('click', (e) => {
     if (e.target === modal) closeMcpModal();
   });
   copyBtn?.addEventListener('click', copyMcpUrl);
+  copyPromptBtn?.addEventListener('click', copyMcpPrompt);
   regenerateBtn?.addEventListener('click', () => {
     if (confirm('新しいMCP連携URLを再発行しますか？（古いURLは無効になります）')) {
       fetchMcpToken(true);
