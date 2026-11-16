@@ -45,7 +45,7 @@ export const POST: APIRoute = async ({ request, locals, url }) => {
         mcpUrl,
         expiresAt,
         quota,
-        message: 'MCP連携用URLを発行しました。スマホのAIアプリやClaude Desktopに登録してください。',
+        message: 'AI連携用URLを発行しました。このURLをAIに送るだけで旅程を作成できます。',
       }),
       {
         status: 201,
