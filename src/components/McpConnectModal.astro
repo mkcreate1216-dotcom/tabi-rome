@@ -59,8 +59,8 @@
         </button>
       </div>
 
-      <div class="mt-2.5 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500">
-        <span id="mcp-status-text" class="inline-flex items-center gap-1 text-emerald-600 font-medium">
+      <div class="mt-2.5 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+        <span id="mcp-status-text" class="inline-flex items-center gap-1 text-emerald-700 font-medium">
           ● 準備完了（そのままAIに貼れます）
         </span>
         <div class="flex items-center gap-3">
@@ -74,7 +74,7 @@
           <button
             id="mcp-regenerate-btn"
             type="button"
-            class="text-slate-400 hover:text-slate-600 underline cursor-pointer"
+            class="text-slate-500 hover:text-slate-700 underline cursor-pointer"
           >
             URLを再発行
           </button>
@@ -83,34 +83,34 @@
     </div>
 
     <!-- かんたん3ステップ -->
-    <div class="space-y-2 mb-4 text-xs text-slate-600">
-      <p class="font-semibold text-slate-700 text-xs">📱 使い方（URLをAIに投げるだけ！）:</p>
+    <div class="space-y-2 mb-4 text-xs sm:text-sm text-slate-700 leading-relaxed">
+      <p class="font-semibold text-slate-800 text-xs sm:text-sm">📱 使い方（URLをAIに投げるだけ！）:</p>
       <div class="grid grid-cols-1 gap-2 pl-1">
         <div class="flex items-start gap-2">
-          <span class="flex-shrink-0 flex h-4 w-4 items-center justify-center rounded-full bg-slate-100 text-[10px] font-bold text-slate-700">1</span>
+          <span class="flex-shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-700">1</span>
           <span>上の「<strong>URLをコピー</strong>」（または「依頼文つきでコピー」）をタップします。</span>
         </div>
         <div class="flex items-start gap-2">
-          <span class="flex-shrink-0 flex h-4 w-4 items-center justify-center rounded-full bg-slate-100 text-[10px] font-bold text-slate-700">2</span>
+          <span class="flex-shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-700">2</span>
           <span>いつも使っているAI（ChatGPT / Claude / Gemini など）に<strong>URLをそのまま貼り付けて送ります</strong>。</span>
         </div>
         <div class="flex items-start gap-2">
-          <span class="flex-shrink-0 flex h-4 w-4 items-center justify-center rounded-full bg-slate-100 text-[10px] font-bold text-slate-700">3</span>
+          <span class="flex-shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-700">3</span>
           <span>「<strong>京都の2泊3日プラン作って！</strong>」と話しかけると、たびろーむの旅程URLが届きます。</span>
         </div>
       </div>
     </div>
 
     <!-- ご利用にあたっての案内 -->
-    <div class="rounded-xl bg-slate-50/80 p-3 border border-slate-100 text-[11px] text-slate-500 space-y-1">
-      <div class="flex items-center gap-1.5 font-semibold text-slate-700">
+    <div class="rounded-xl bg-slate-50/80 p-3.5 border border-slate-100 text-xs text-slate-600 leading-relaxed space-y-1">
+      <div class="flex items-center gap-1.5 font-semibold text-slate-800">
         <span>💡 ご利用のヒント</span>
       </div>
       <p>・完成した旅程はAIから届くリンクを開くだけで、地図ルート確認やLINE共有ができます。</p>
       <p>・1日に最大200回まで作成・調整できます（データは最終更新から90日間保持されます）。</p>
-      <details class="pt-1 text-slate-400">
-        <summary class="cursor-pointer hover:text-slate-600 select-none">MCP対応アプリに登録して使う場合（毎回URLを貼らずに使いたい方）</summary>
-        <p class="mt-1 pl-2 text-slate-500">ClaudeやCursorなどのMCP（コネクタ）設定にこのURLを登録しておくと、次回からURLを貼らずに話しかけるだけで旅程を作れます。</p>
+      <details class="pt-1 text-slate-500">
+        <summary class="cursor-pointer hover:text-slate-700 select-none">MCP対応アプリに登録して使う場合（毎回URLを貼らずに使いたい方）</summary>
+        <p class="mt-1 pl-2 text-slate-600 leading-relaxed">ClaudeやCursorなどのMCP（コネクタ）設定にこのURLを登録しておくと、次回からURLを貼らずに話しかけるだけで旅程を作れます。</p>
       </details>
     </div>
   </div>
