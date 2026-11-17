@@ -72,7 +72,7 @@
 ## ディレクトリ構成
 
 ```text
-root-generator-public/
+tabi-rome/
 ├── .github/
 │   └── workflows/
 │       └── deploy.yml            # GitHub Actions (ビルド & Cloudflare Pagesデプロイ)
@@ -177,7 +177,7 @@ npm run preview
 
 1. [Cloudflare ダッシュボード](https://dash.cloudflare.com/) にログイン
 2. **Workers & Pages** > **Create application** > **Pages** > **Connect to Git** を選択
-3. GitHub アカウントを認証し、`root-generator-public` リポジトリを選択
+3. GitHub アカウントを認証し、`tabi-rome` リポジトリを選択
 4. ビルド設定を入力：
    - **Framework preset**: `Astro`
    - **Build command**: `npm run build`
