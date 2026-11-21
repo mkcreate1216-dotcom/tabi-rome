@@ -43,6 +43,7 @@ import {
 } from './share';
 import { animateSpotReorder } from './flip';
 import { collabManager } from './collab';
+import { parseMemo, fitMemoTextareaHeight, initializeMemoTextareaView } from './memo';
 
 function refreshIcons(_root?: HTMLElement): void {
   createIcons({
@@ -1191,19 +1192,6 @@ function animateDayTabsStagger(): void {
   }, totalDuration);
 }
 
-function parseMemo(memo: string): {
-  firstLine: string;
-  restLines: string[];
-  hasRest: boolean;
-} {
-  const normalized = (memo || '').replace(/\r\n/g, '\n');
-  const lines = normalized.split('\n');
-  const firstLine = lines[0] || '';
-  const restLines = lines.slice(1);
-  const hasRest = restLines.some((l) => l.trim().length > 0);
-  return { firstLine, restLines, hasRest };
-}
-
 function createMemoComponent(options: {
   memo: string;
   onSave: (newMemo: string) => void;
@@ -1287,6 +1275,10 @@ function createMemoComponent(options: {
         finishEditing();
       });
 
+      textarea.addEventListener('input', () => {
+        fitMemoTextareaHeight(textarea);
+      });
+
       textarea.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' || ((e.metaKey || e.ctrlKey) && e.key === 'Enter')) {
           e.preventDefault();
@@ -1303,9 +1295,9 @@ function createMemoComponent(options: {
       editBox.append(textarea, actionRow);
       wrap.appendChild(editBox);
 
+      fitMemoTextareaHeight(textarea);
       setTimeout(() => {
-        textarea.focus();
-        textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
+        initializeMemoTextareaView(textarea);
       }, 10);
       return;
     }
