@@ -63,8 +63,6 @@ const { title, description, ogType, initialPlanData = null } = Astro.props;
         <!-- 旅の準備（宿泊・レンタカー予約プロモーション） -->
         <TravelBookingAd slotId="itinerary_bottom" />
 
-        <!-- 旅程の保存・バックアップ出力（画像/テキスト）＆削除 -->
-        <ItineraryFooterActions />
 
         <div id="endpoint-section" class="hidden mt-6 clay-sunken p-3.5 sm:p-5">
           <div id="departure-field">
@@ -102,6 +100,8 @@ const { title, description, ogType, initialPlanData = null } = Astro.props;
 
   <DayTabs />
   <Tooltip />
+  <!-- 旅程の保存・バックアップ出力（画像/テキスト）＆削除モーダル群（LP状態でも表示できるよう itinerary-section の外に配置） -->
+  <ItineraryFooterActions />
   <McpConnectModal />
 
   {initialPlanData && (
